@@ -15,14 +15,15 @@ public class BinanceService {
     private final BinanceRepository binanceRepository;
     private final UserRepository userRepository;
 
-    public BinanceEntity save(BinanceDto binanceDto) {
-        UserEntity user = userRepository.findById(binanceDto.getUserId())
+
+    public BinanceEntity save(BinanceDto dto) {
+        UserEntity user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        BinanceEntity binanceEntity = BinanceEntity.builder()
-                .apiKey(binanceDto.getApiKey())
-                .secretKey(binanceDto.getSecretKey())
+        BinanceEntity entity = BinanceEntity.builder()
+                .apiKey(dto.getApiKey())
+                .secretKey(dto.getSecretKey())
                 .user(user)
                 .build();
-        return binanceRepository.save(binanceEntity);
+        return binanceRepository.save(entity);
     }
 }

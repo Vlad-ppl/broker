@@ -4,7 +4,6 @@ import com.java.broker.dto.BinanceDto;
 import com.java.broker.entity.BinanceEntity;
 import com.java.broker.services.BinanceService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +17,7 @@ public class BinanceController {
     private final BinanceService binanceService;
 
     @PostMapping("/add")
-    public ResponseEntity<BinanceEntity> addBinanceAccount(@RequestBody BinanceDto dto) {
-        return ResponseEntity.ok(binanceService.save(dto));
+    public BinanceEntity addBinance(@RequestBody BinanceDto dto) {
+        return binanceService.save(dto);
     }
 }
