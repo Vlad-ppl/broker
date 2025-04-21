@@ -34,7 +34,7 @@ public class UserService {
         UserEntity userEntity = UserEntity.builder()
                 .username(userDto.getUsername())
                 .password(userDto.getPassword())
-                .email(userDto.getUsername())
+                .email(userDto.getEmail())
                 .role(userDto.getRole())
                 .build();
         return userRepository.save(userEntity);
