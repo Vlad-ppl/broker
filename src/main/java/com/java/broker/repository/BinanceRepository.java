@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 @Repository
 public interface BinanceRepository extends JpaRepository<BinanceEntity, Long> {
-    Optional<BinanceEntity> findById(String username);
-    Optional<BinanceEntity> findByEmail(String email);
+    Optional<BinanceEntity> findById(Long username);
+   // Optional<BinanceEntity> findByEmail(String email);
 }
