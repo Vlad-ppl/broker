@@ -17,28 +17,18 @@ public class BinanceBalanceService {
 
     public String getAccountBalanceByEmail(String email) {
         SpotClientImpl client = binanceClientFactory.create(email);
-
-        Map<String, Object> params = new HashMap<>();
-        return client.createTrade().account(params);
+        return client.createTrade().account(new HashMap<>());
     }
 
     public String getBtcBalance(String email) {
-        SpotClientImpl client = binanceClientFactory.create(email);
-        String response = client.createTrade().account(new HashMap<>());
-
-        JSONArray balances = new JSONObject(response).getJSONArray("balances");
-
-        for (int i = 0; i < balances.length(); i++) {
-            JSONObject asset = balances.getJSONObject(i);
-            if ("BTC".equals(asset.getString("asset"))) {
-                return asset.getString("free");
-            }
-        }
-
-        return "0.0";
+        return getAssetBalance(email, "BTC");
     }
 
     public String getUsdtBalance(String email) {
+        return getAssetBalance(email, "USDT");
+    }
+
+    private String getAssetBalance(String email, String assetSymbol) {
         SpotClientImpl client = binanceClientFactory.create(email);
         String response = client.createTrade().account(new HashMap<>());
 
@@ -46,13 +36,11 @@ public class BinanceBalanceService {
 
         for (int i = 0; i < balances.length(); i++) {
             JSONObject asset = balances.getJSONObject(i);
-            if ("USDT".equals(asset.getString("asset"))) {
+            if (assetSymbol.equals(asset.getString("asset"))) {
                 return asset.getString("free");
             }
         }
 
         return "0.0";
     }
-
-
 }
