@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/binance")
 @RequiredArgsConstructor
-public class BinanceAccountController {
+public class BinanceBalanceController {
 
     private final BinanceBalanceService binanceAccountService;
 
