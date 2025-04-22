@@ -26,4 +26,5 @@ public class BinanceService {
                 .build();
         return binanceRepository.save(entity);
     }
+
 }
