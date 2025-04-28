@@ -3,6 +3,7 @@ package com.java.broker.services.impl;
 import com.java.broker.entity.UserEntity;
 import com.java.broker.factory.ApiClientFactory;
 import com.java.broker.repository.UserRepository;
+import com.java.broker.services.BalanceExtractorService;
 import com.java.broker.services.BrokerService;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
@@ -18,6 +19,7 @@ public class BinanceServiceImpl implements BrokerService {
 
     private final UserRepository userRepository;
     private final ApiClientFactory binanceApiClientFactory;
+    private final BalanceExtractorService balanceExtractorService;
 
     @Override
     public String getAccountInfo(String email) {
@@ -36,22 +38,9 @@ public class BinanceServiceImpl implements BrokerService {
         String response = client.createTrade().account(params);
 
         JSONObject json = new JSONObject(response);
-
         JSONArray balances = json.getJSONArray("balances");
 
-        JSONObject result = new JSONObject();
-
-        for (int i = 0; i < balances.length(); i++) {
-            JSONObject balance = balances.getJSONObject(i);
-            String asset = balance.getString("asset");
-            String free = balance.getString("free");
-
-            if ("BTC".equals(asset) || "USDT".equals(asset)) {
-                result.put(asset, free);
-            }
-        }
-
-        return result.toString();
+        return balanceExtractorService.extractBalance(balances).toString();
     }
 
     private UserEntity getUserByEmailWithAccounts(String email) {

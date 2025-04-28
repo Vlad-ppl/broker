@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class BinanceApiClientFactory implements ApiClientFactory {
     @Override
     public SpotClientImpl createClient(UserEntity user) {
-        BinanceEntity binanceAccount = user.getBinanceAccounts().get(0); // Берем 1-й аккаунт
+        BinanceEntity binanceAccount = user.getBinanceAccounts().get(0);
         return new SpotClientImpl(binanceAccount.getApiKey(), binanceAccount.getSecretKey());
     }
 }
