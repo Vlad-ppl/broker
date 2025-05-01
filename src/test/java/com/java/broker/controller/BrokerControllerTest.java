@@ -10,6 +10,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.NoSuchElementException;
+
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -54,6 +56,19 @@ public class BrokerControllerTest {
                         .param("email", email))
                 .andExpect(status().isOk())
                 .andExpect(content().string(expectedBalance));
+    }
+
+    @Test
+    @DisplayName("GET /api/broker/account should return 404 if user not found")
+    void getAccountInfo_ShouldReturn404_WhenUserNotFound() throws Exception {
+        String email = "notfound@example.com";
+
+        when(brokerService.getAccountInfo(email)).thenThrow(new NoSuchElementException("User not found"));
+
+        mockMvc.perform(get("/api/broker/account")
+                        .param("email", email))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("User not found"));
     }
 
 }
