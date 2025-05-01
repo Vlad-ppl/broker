@@ -1,5 +1,6 @@
 package com.java.broker.services.impl;
 
+import com.binance.connector.client.impl.SpotClientImpl;
 import com.java.broker.entity.UserEntity;
 import com.java.broker.factory.ApiClientFactory;
 import com.java.broker.repository.UserRepository;
@@ -11,7 +12,6 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -28,20 +28,29 @@ public class BinanceServiceImpl implements BrokerService {
 
         return client.createWallet().accountStatus(new LinkedHashMap<>());
     }
-
     @Override
     public String getAccountBalance(String email) {
-        UserEntity user = getUserByEmailWithAccounts(email);
-        var client = binanceApiClientFactory.createClient(user);
+        UserEntity user = getUserWithKeys(email);
+        SpotClientImpl client = binanceApiClientFactory.createClient(user);
+        String response = fetchRawBalance(client);
+        return parseAndExtractBalance(response);
+    }
 
-        Map<String, Object> params = new LinkedHashMap<>();
-        String response = client.createTrade().account(params);
+    private UserEntity getUserWithKeys(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
 
-        JSONObject json = new JSONObject(response);
-        JSONArray balances = json.getJSONArray("balances");
+    private String fetchRawBalance(SpotClientImpl client) {
+        return client.createTrade().account(new LinkedHashMap<>());
+    }
 
+    private String parseAndExtractBalance(String json) {
+        JSONObject jsonObject = new JSONObject(json);
+        JSONArray balances = jsonObject.getJSONArray("balances");
         return balanceExtractorService.extractBalance(balances).toString();
     }
+
 
     private UserEntity getUserByEmailWithAccounts(String email) {
         return userRepository.findByEmail(email)
